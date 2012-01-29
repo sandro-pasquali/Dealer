@@ -1,13 +1,10 @@
 {
     "name": "dealer",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "url": "http://www.unifiedapplications.com/github/Dealer",
     "description": "Manage sets through a redis-like interface",
     "keywords": ["redis", "javascript", "nodejs", "sets", "set"],
     "author": "Sandro Pasquali <spasquali@gmail.com>",
-    "dependencies": {
-        "terrace-lib"    : ">=0.1.1"
-    },
     "main": "dealer",
     "engines": { "node": ">= 0.6.1" },
     "repository": {

@@ -2,32 +2,57 @@
 
 //  TODO: compress when duds exceed some threshold
 //
-module.exports   = function(options) {
+(function() {
 
-options = options || {};
-
-var	$	= this;
-
-//	The set collections.
-//
-//	#original		: Set objects. The original set passed to #add.
-//	#active			: Set objects. The current set after n transformations.
-//	#indexes		: Array whose indices correspond to a set object's values.
-//
-//	Set Object	: { "a":0, "b":1, "c":2 }
-//	Index Array	: ["a", "b", "c"];
-//
-var BINDING = options.binding || $.spawn({
+var BINDING = {
 	original 	: {},
 	active		: {},
 	indexes		: [],
 	duds		: []
-})
+};
 
-var ORIGINAL 	= BINDING.$get("original");
-var ACTIVE		= BINDING.$get("active");
-var INDEXES 	= BINDING.$get("indexes");
-var DUDS		= BINDING.$get("duds");
+var ORIGINAL 	= BINDING.original;
+var ACTIVE		= BINDING.active;
+var INDEXES 	= BINDING.indexes);
+var DUDS		= BINDING.duds;
+
+//  A library of common methods
+//  
+var $$ = {
+    isArray     : function(a) {
+        return Object.prototype.toString.call(a) === '[object Array]';
+    },
+    argsToArray : function(a, offset, end) {
+        return Array.prototype.slice(a, offset || 0, end);
+    },
+    objToArray  : function(o, vals) {
+        var p;
+        var r = [];
+    
+        for(p in o) {
+            if(vals) {
+                r[o[p]] = p;
+            } else {
+                r.push(p);
+            }
+        }
+    
+        return r;
+    },
+    arrayToObj  : function(a) {
+        var len = a.length;
+        var ob 	= {};
+    
+        while(len--) {
+            ob[a[len]] = len;
+        }
+    
+        return ob;
+    },
+    copy        : function(s) {
+        return s.slice(0);
+    }
+};
 
 //	These set methods only return a value if their operation is non-destructive.
 //	The current operating set is passed by reference, and as such does not need
@@ -90,7 +115,7 @@ var METHODS = {
 	//	@return		{Array}
 	//
     members : function(cur, idx, a, len, key, duds) {
-        var m = $.copy(idx, 1);
+        var m = $$.copy(idx);
         var d = duds.length;
 
         while(d--) {
@@ -105,7 +130,7 @@ var METHODS = {
     //	Will replace the #original set with the current #active set.
     //
     commit	: function(cur, idx, a, len, key) {
-    	ORIGINAL[key] = $.copy(ACTIVE[key], 1);
+    	ORIGINAL[key] = $$.copy(ACTIVE[key]);
     },
 
 	//	##reset
@@ -113,7 +138,7 @@ var METHODS = {
     //	Will replace the #active set with the #original set.
     //
     reset	: function(cur, idx, a, len, key) {
-    	ACTIVE[key] = $.copy(ORIGINAL[key], 1);
+    	ACTIVE[key] = $$.copy(ORIGINAL[key]);
     },
 
 	//	##pluck
@@ -175,14 +200,14 @@ var METHODS = {
         while(k = a.shift()) {
             //  Keys(sets) which do not exist are considered to be empty sets.
             //
-            s 	= $.is(Array, k) ? k : INDEXES[k] || [];
+            s 	= $$.isArray(k) ? k : INDEXES[k] || [];
             si	= s.length;
             while(si--) {
             	map[s[si]] = 1;
             }
         }
 
-		return $.$objectToArray(map);
+		return $$.objToArray(map);
     },
 
 	//	##diff
@@ -194,7 +219,7 @@ var METHODS = {
 	//	@return	{Array}
 	//
     diff   : function(cur, idx, a) {
-        var prime 	= $.copy(cur, 1);
+        var prime 	= $$.copy(cur);
         var s;
         var si;
         var k;
@@ -211,7 +236,7 @@ var METHODS = {
             }
         }
 
-        return $.$objectToArray(prime);
+        return $$.objToArray(prime);
     },
 
 	//	##intersect
@@ -242,7 +267,7 @@ var METHODS = {
             //  Keys(sets) which do not exist are considered to be empty sets.
             //  Intersection with an empty set always produces an empty set.
             //
-            s 	= $.is(Array, k) ? k : (INDEXES[k] || []);
+            s 	= $$.isArray(k) ? k : (INDEXES[k] || []);
             si 	= s.length;
             while(si--) {
                 if((map[s[si]] = map[s[si]] ? map[s[si]] += 1 : 1) === aL) {
@@ -264,7 +289,7 @@ var METHODS = {
 //  current set, determines current set values, filters argument list, and calls method.
 //
 var SET_ACCESSOR = function(m, key) {
-    var a   	= $.argsToArray(arguments, 2);
+    var a   	= $$.argsToArray(arguments, 2);
 	var cur 	= ACTIVE[key];
 	var si		= INDEXES[key];
 	var duds	= DUDS[key];
@@ -300,17 +325,17 @@ var SET_ACCESSOR = function(m, key) {
         	duds	= DUDS[key] 	= [];
             initial = true;
 		} else if(m == "intersect") {
-			if(!$.is(Array, key)) {
+			if(!$$.isArray(key)) {
 				return [];
 			}
 		} else if(m == "diff") {
 			cur = {};
-			if($.is(Array, key)) {
-				cur = $.$arrayToObject(key);
+			if($$.isArray(key)) {
+				cur = $$.arrayToObj(key);
 			}
         } else if(m == "union") {
 			si = [];
-			if($.is(Array, key)) {
+			if($$.isArray(key)) {
 				si = key;
 			}
         } else {
@@ -328,7 +353,7 @@ var SET_ACCESSOR = function(m, key) {
 	//	what you want.
 	//
 	if(initial) {
-		ORIGINAL[key] = $.copy(cur, 1);
+		ORIGINAL[key] = $$.copy(cur);
 	}
 
    	return result || cur;
@@ -356,21 +381,21 @@ while(SET_M.length) {
 
 			//	Methods have varying functional signatures.
 			//
-		    var a = $.argsToArray(arguments);
+		    var a = $$.argsToArray(arguments);
 
 			//	#LIST_ACCESSOR expects method name as first argument.
 			//
             a.unshift(m);
 
-			return SET_ACCESSOR.apply($.sets, a);
+			return SET_ACCESSOR.apply(KIT, a);
 		};
 	})(SET_M.pop());
 }
 
-$.addKit("sets", KIT);
+if(typeof exports == 'object' && exports) {
+    exports.dealer = KIT;
+} else {
+    window.dealer = KIT;
+}
 
-console.log($)
-
-return $.sets;
-
-};
+})();
