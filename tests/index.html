@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Dealer</title>
+	<script type="text/javascript" src="../dealer.js"></script>
+	<script type="text/javascript">
+
+        console.log("\nSETS\n\n");
+        
+        dealer.add("sandro", 4, 4, 1, 2, 3, 4, 4, 4, "a", {foo: "BAR"}, [88,99,1010], "some", "more", "more", "stuff")
+        dealer.add("a", "a1", "a2", "a3", "foo", "bar", "baz");
+        dealer.add("b", "b1", "b2", "b3", "foo");
+        dealer.add("c", "c1", "c2", "c3", "foo", "bar");
+        
+      console.log(dealer.members("sandro"));  
+        
+        console.log(dealer.intersect("a", "b", "c"));
+        console.log(dealer.intersect(["foo", "bar", "c1"], "a", "c"));
+        console.log(dealer.diff("a","b","c"));
+        console.log(dealer.diff(["foo", "bar", "bink"], "a", "b", "c"));
+        console.log(dealer.union("a", "b", "c"));
+        console.log(dealer.union(["zip","zap"], "a", "b", "c"));
+        
+        
+        console.log(dealer.members("sandro"))
+        console.log("Removed:");
+        console.log(dealer.remove("sandro", 1, 2, "a", "some"))
+        console.log(dealer.members("sandro"))
+        dealer.add("sandro", "wooga")
+        console.log(dealer.members("sandro"))
+
+
+console.log(dealer)
+	
+	</script>
+</head>
+<body>
+
+</body>
+</html>

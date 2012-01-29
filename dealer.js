@@ -13,7 +13,7 @@ var BINDING = {
 
 var ORIGINAL 	= BINDING.original;
 var ACTIVE		= BINDING.active;
-var INDEXES 	= BINDING.indexes);
+var INDEXES 	= BINDING.indexes;
 var DUDS		= BINDING.duds;
 
 //  A library of common methods
@@ -23,7 +23,7 @@ var $$ = {
         return Object.prototype.toString.call(a) === '[object Array]';
     },
     argsToArray : function(a, offset, end) {
-        return Array.prototype.slice(a, offset || 0, end);
+        return Array.prototype.slice.call(a, offset || 0, end);
     },
     objToArray  : function(o, vals) {
         var p;
@@ -50,7 +50,7 @@ var $$ = {
         return ob;
     },
     copy        : function(s) {
-        return s.slice(0);
+        return this.isArray(s) ? s.slice(0) : s;
     }
 };
 

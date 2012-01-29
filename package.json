@@ -1,6 +1,6 @@
 {
     "name": "dealer",
-    "version": "0.1.1",
+    "version": "0.1.3",
     "url": "http://www.unifiedapplications.com/github/Dealer",
     "description": "Manage sets through a redis-like interface",
     "keywords": ["redis", "javascript", "nodejs", "sets", "set"],
